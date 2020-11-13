@@ -12,21 +12,21 @@ def hash_string(id):
 def RangeQuery(ratingsTableName, ratingMinValue, ratingMaxValue, keylength, openconnection):
     data = []
     
-    hash_got = {}
-    list_req = [chr(c+ord('a')) for c in range(0,26)]    
-    heapq.heapify(list_req)
+    # hash_got = {}
+    # list_req = [chr(c+ord('a')) for c in range(0,26)]    
+    # heapq.heapify(list_req)
     
-    while(len(list_req) > 0):
-        st = heapq.heappop(list_req)
+    # while(len(list_req) > 0):
+    #     st = heapq.heappop(list_req)
         
-        if(len(st) < keylength):
-            hash_got[hash_string(st)] = 1
-            for c in range(0,26):
-                st = st + chr(c + ord('a'))
-                heapq.heappush(list_req,st)
+    #     if(len(st) < keylength):
+    #         hash_got[hash_string(st)] = 1
+    #         for c in range(0,26):
+    #             st = st + chr(c + ord('a'))
+    #             heapq.heappush(list_req,st)
         
-        if(len(hash_got) >= 26):
-            break
+    #     if(len(hash_got) >= 26):
+    #         break
     
     cur = openconnection.cursor()
     cur.execute('select current_database()')
@@ -36,8 +36,9 @@ def RangeQuery(ratingsTableName, ratingMinValue, ratingMaxValue, keylength, open
     range_partitions = cur.fetchall()
 
     for table in range_partitions:
+        # print(table)
         table_name = table[0]
-        cur.execute("select userid, rating from " + str(table_name) + " where userid >= '" + ratingMinValue + "' and userid <= '" + ratingMaxValue + "'")
+        cur.execute("select userid, rating from " + str(table_name) + " where userid >= '" + ratingMinValue + "' and userid <= '" + ratingMaxValue + "' and length(userid) <= ' " + str(keylength) + "'")
         matches = cur.fetchall()
 
         for match in matches:
@@ -74,8 +75,9 @@ def FastRangeQuery(ratingsTableName, ratingMinValue, ratingMaxValue, keylength, 
         
     
     for table in hash_got:
+        # print(table)
         table_name = name = "RangeRatingsPart" + str(table)
-        cur.execute("select userid, rating from " + table_name + " where userid >= '" + ratingMinValue + "' and userid <= '" + ratingMaxValue + "'")
+        cur.execute("select userid, rating from " + table_name + " where userid >= '" + ratingMinValue + "' and userid <= '" + ratingMaxValue + "' and length(userid) <= '" + str(keylength) + "'")
         matches = cur.fetchall()
 
         for match in matches:

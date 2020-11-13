@@ -55,7 +55,7 @@ void solve()
 		alpha.pb(i);
 
 	loop(i, N){
-		int len = 1+rand()%5;
+		int len = 1+rand()%10;
 
 		string s;
 		for(int i=0;i<len;i++)
@@ -63,7 +63,7 @@ void solve()
 			s += alpha[rand()%26];
 		}
 		int rating = 1 + rand()%10;
-		cout<<s<<"::"<<rating<<endl;
+		cout<<s<<","<<rating<<endl;
 	}
 }
 
